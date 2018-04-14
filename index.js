@@ -1,79 +1,109 @@
-function Point(x, y) {
-  this.x = x;
-  this.y = y;
-  this.toString = () => { return `(${this.x}, ${this.y})`}
+function Point(x,y) {
+	this.x = x;
+	this.y = y;
 }
 
-function Side(side) {
-  this.length = side
-
+Point.prototype.toString = function() {
+	return this.x + ", " + this.y;
 }
 
-function Shape() {
-}
-Shape.prototype.addToPlane = function(x,y) {this.position = new Point(x, y) }
-Shape.prototype.move = function(x,y) {this.position = new Point(x, y) }
+function Shape() {}
+
+	Shape.prototype.addToPlane = function(x,y){
+		this.position = new Point(x,y);
+	}
+
+	Shape.prototype.move = function(x,y) {
+		this.position = new Point(x,y);
+	}
+
 
 function Circle(radius) {
-  Shape.call(this);
-  this.radius = radius
+	Shape.call(this);
+	this.radius = radius;
 }
+
 Circle.prototype = Object.create(Shape.prototype);
 Circle.prototype.constructor = Circle;
-Circle.prototype.diameter = function() {return this.radius * 2}
-Circle.prototype.area = function() {return Math.PI * this.radius ** 2}
-Circle.prototype.circumference = function() {return 2 * this.radius * Math.PI}
 
-function Polygon() {
-  Shape.call(this);
-  this.args = arguments
+Circle.prototype.area = function(){
+	return Math.PI*(this.radius*this.radius);
 }
-Polygon.prototype = Object.create(Shape.prototype)
-Polygon.prototype.constructor = Polygon
-Polygon.prototype.perimeter = function() {
-  var args = Array.prototype.slice.call(this.args[0])
-   return args.reduce((sum, arg) => {
-   return  sum = arg.length
-  }, 0)
+
+Circle.prototype.circumference = function(){
+	return 2*Math.PI*this.radius;
 }
+
+Circle.prototype.diameter = function() {
+   return(this.radius*2);
+}
+
+function Side(length) {
+	this.length = length;
+
+}
+function Polygon(sides){
+	Shape.call(this);
+	this.sides = sides;
+}
+
+Polygon.prototype = Object.create(Shape.prototype);
+Polygon.prototype.constructor = Polygon;
+
+Polygon.prototype.perimeter = function(){
+	var p = 0;
+	for(let i = 0; i<this.sides.length; i++) {
+		p += this.sides[i].length;
+	}
+	return p;
+}
+
 Polygon.prototype.numberOfSides = function() {
-  var args = Array.prototype.slice.call(this.args[0])
-  return args.length
+	return this.sides.length;
 }
 
-function Quadrilateral(sideOneLength, sideTwoLength, sideThreeLength, sideFourLength) {
-  Polygon.call(this, [new Side(sideOneLength), new Side(sideTwoLength), new Side(sideThreeLength), new Side(sideFourLength)])
+function Quadrilateral(len1, len2, len3, len4) {
+	Polygon.call(this, [new Side(len1), new Side(len2), new Side(len3), new Side(len4)]);
 }
-Quadrilateral.prototype = Object.create(Polygon.prototype)
-Quadrilateral.prototype.constructor = Quadrilateral
+
+Quadrilateral.prototype = Object.create(Polygon.prototype);
+Quadrilateral.prototype.constructor = Quadrilateral;
+
+function Triangle(len1, len2, len3) {
+	Polygon.call(this, [new Side(len1), new Side(len2), new Side(len3)]);
+}
+
+Triangle.prototype = Object.create(Polygon.prototype);
+Triangle.prototype.constructor = Triangle;
 
 function Rectangle(width, height) {
-  Quadrilateral.call(this,width, height, width, height)
-  this.width = width
-  this.height = height
-}
-Rectangle.prototype  = Object.create(Quadrilateral.prototype)
-Rectangle.prototype.constructor = Quadrilateral
-Rectangle.prototype.area = function() {return this.width * this.height}
-
-function Square(sideLength) {
-  Rectangle.call(this, sideLength, sideLength, sideLength, sideLength)
-  // this
-}
-Square.prototype = Object.create(Rectangle.prototype)
-Square.prototype.constructor = Square
-Square.prototype.listProperties = function() {
-  var props = '';
-  for (let prop in this) {
-    if(this.hasOwnProperty(prop)) {
-      props = prop
-    }
-  }
-  return props
+	Quadrilateral.call(this, width, height, width, height)
+	this.width = width;
+	this.height = height;
 }
 
-function Triangle(sideOneLength, sideTwoLength, sideThreeLength,) {
-    Polygon.call(this, [new Side(sideOneLength), new Side(sideTwoLength), new Side(sideThreeLength)])
+Rectangle.prototype = Object.create(Quadrilateral.prototype);
+Rectangle.prototype.constructor = Rectangle;
+
+
+Rectangle.prototype.area = function(){
+	return this.width * this.height;
 }
-Triangle.prototype = Object.create(Polygon.prototype)
-Triangle.prototype.constructor = Triangle
+
+function Square(length) {
+	Rectangle.call(this, length, length)
+	this.length = length;
+}
+
+Square.prototype = Object.create(Rectangle.prototype);
+Square.prototype.constructor = Square;
+
+Square.prototype.listProperties = function(){
+	var props = "";
+	for (var prop in this) {
+		if(this.hasOwnProperty(prop)) {
+			props += "this." + prop + " = " + this[prop];
+		}
+	}
+	return props;
+}
